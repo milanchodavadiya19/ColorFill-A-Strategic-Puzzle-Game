@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block content %}
+<h1>Alcemy Colorfill Game</h1>
+{% if new_game == 0 %}
+<table border = 2 cellpadding="10">
+  {% set count = namespace(value=0) %}
+    {% for row in board %}
+        <tr>
+            {% for cell in row %}
+            {% set color = colors[count.value] %}
+                <td {% if (i,j) in path_indx %} class="highlighted" style= "background-color:{{ color }};" {% else %} style="background-color:{{ color }};" {% endif %}>{{color}}</td>
+                {% set count.value = count.value + 1 %}
+            {% endfor %}
+        </tr>
+    {% endfor %}
+</table>
+
+{% set new_game = 1 %}
+{% set unique_list = [] %}
+{% for x in colors %}
+    {% if x not in unique_list %}
+        {% set unique_list = unique_list.append(x) %}
+    {% endif %}
+{% endfor %}
+{% endif %}
+
+<h3>Choose a color</h3>
+    <script>
+        var count = 0;
+    </script>
+    <form method="POST" action="{{ url_for('play_game') }}">
+
+        <ul>
+            {% for member in board %}
+            <input type="hidden" name="colored_board" value="{{ member }}">
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for member in connected_path_indx %}
+            <input type="hidden" name="connected_path_indx" value="{{ member }}">
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for member in colors %}
+            <input type="hidden" name="colors" value="{{ member }}">
+            {% endfor %}
+        </ul>
+        <button type="submit" style="background-color: {{unique_list[0]}};" name="chosen_color" value={{unique_list[0]}} onclick="window.location.href='{{url_for('play_game', chosen_color=chosen_color)}}';">{{unique_list[0]}}</button>
+        <button type="submit" style="background-color: {{unique_list[1]}};" name="chosen_color" value={{unique_list[1]}} onclick="window.location.href='{{url_for('play_game', chosen_color=chosen_color)}}';">{{unique_list[1]}}</button>
+        <button type="submit" style="background-color: {{unique_list[2]}};" name="chosen_color" value={{unique_list[2]}} onclick="window.location.href='{{url_for('play_game', chosen_color=chosen_color)}}';">{{unique_list[2]}}</button>
+        <p id="count"></p>
+        <script>
+            var button = document.getElementById("moveButton");
+            var countDisplay = document.getElementById("count");
+            button.addEventListener("click", function() {
+                count++;
+                countDisplay.innerHTML = count;
+            });
+        </script>
+    </form>
+{% endblock %}

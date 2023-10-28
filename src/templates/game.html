@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+{% block content %}
+    {% if new_game != 0 %}
+    <h1>Alcemy Colorfill Game</h1>
+    <table border = 2 cellpadding="10">   
+        {% for nextMove in colored_board %}
+            <tr>
+                {% for element in nextMove %}
+                    <td{% if (i,j) in connected_path_indx %} class="highlighted" style= "background-color:{{ element }};" {% else %} style="background-color:{{ element }};" {% endif %}>{{element}}</td>
+                {% endfor %}
+            </tr>
+        {% endfor %}
+    </table>
+    {% set new_game = 1 %}
+    {% set unique_list = [] %}
+    {% for x in colors %}
+        {% if x not in unique_list %}
+            {% set unique_list = unique_list.append(x) %}
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+    <h3>Choose a color</h3>
+    <form method="POST" action="{{ url_for('play_game') }}">
+
+        <ul>
+            {% for member in connected_path_indx %}
+                <input type='hidden' name="connected_path_indx" value="{{ member }}">
+            {% endfor %}
+        </ul>
+        <ul>
+            {% for member in colored_board %}
+            <input type= 'hidden' name="colored_board" value="{{ member }}">
+            {% endfor %}
+        </ul>
+        <button type="submit" style="background-color: {{unique_list[0]}};" name="chosen_color" value={{unique_list[0]}} onclick="window.location.href='{{url_for('play_game', chosen_color=chosen_color)}}';">{{unique_list[0]}}</button>
+        <button type="submit" style="background-color: {{unique_list[1]}};" name="chosen_color" value={{unique_list[1]}} onclick="window.location.href='{{url_for('play_game', chosen_color=chosen_color)}}';">{{unique_list[1]}}</button>
+        <button type="submit" style="background-color: {{unique_list[2]}};" name="chosen_color" value={{unique_list[2]}} onclick="window.location.href='{{url_for('play_game', chosen_color=chosen_color)}}';">{{unique_list[2]}}</button>
+
+    </form>
+{% endblock %}
+
